@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Taklif yarating</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .tg-badge { background:#229ED9; color:white; border-radius:20px; padding:6px 14px; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:6px; margin-bottom:12px; }
+  .tg-badge svg { width:16px; height:16px; fill:white; }
+  .notify-info { background:#e8f5fe; border-left:3px solid #229ED9; border-radius:8px; padding:10px 14px; font-size:12px; color:#1a6fa8; margin-bottom:12px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="top-bar">
+    <span class="lang-label">TIL</span>
+    <div class="lang-switch">
+      <button class="lang-btn active" data-lang="uz">UZ</button>
+      <button class="lang-btn" data-lang="ru">RU</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+    </div>
+  </div>
+
+  <p class="eyebrow">— UCHRASHUV TAKLIFNOMASI —</p>
+  <h1 class="script-title">Taklif yarating</h1>
+  <p class="subtitle">Maxsus insoningizga chiroyli taklif — xat + «Ha / Yo'q» 💗</p>
+
+  <div id="tgNotice" style="display:none" class="card">
+    <div class="tg-badge">
+      <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.19 13.664l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.958.895z"/></svg>
+      Telegram orqali ulangan
+    </div>
+    <div class="notify-info">
+      ✅ Do'stingiz javob berganda sizga <b>Telegram xabari</b> keladi!
+    </div>
+  </div>
+
+  <div id="historyBox" style="display:none" class="card">
+    <h3>🕘 Oldingi takliflaringiz</h3>
+    <div id="historyList"></div>
+  </div>
+
+  <div class="card">
+    <h3>💬 Asosiy</h3>
+    <div class="row">
+      <div>
+        <label>KIMDAN (SIZNING ISMINGIZ)</label>
+        <input id="from" placeholder="Jasur">
+      </div>
+      <div>
+        <label>KIMGA (ISMI)</label>
+        <input id="to" placeholder="Dilnoza">
+      </div>
+    </div>
+
+    <label>XAT / XABAR</label>
+    <textarea id="message" rows="4">Sizni ko'rgan kunimdan beri qalbimda iliqlik paydo bo'ldi. Agar ruxsat bersangiz, birga chiroyli lahzalarni baham ko'rishni istardim.</textarea>
+    <div class="chips" id="messageChips">
+      <span class="chip">Sizni ko'rgan kunimdan beri qalbimda iliqlik paydo bo'ldi...</span>
+      <span class="chip">Har bir kun Siz bilan yanada mazmunli bo'lardi...</span>
+      <span class="chip">Sizning tabassumingiz menga ilhom beradi...</span>
+    </div>
+
+    <label>SAVOL</label>
+    <input id="question" value="Men bilan uchrashishga rozi bo'lasizmi?">
+    <div class="chips" id="questionChips">
+      <span class="chip">Men bilan uchrashishga rozi bo'lasizmi?</span>
+      <span class="chip">Menga bir imkoniyat berasizmi?</span>
+      <span class="chip">Birga vaqt o'tkazsak bo'ladimi?</span>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>VAQT (IXTIYORIY)</label>
+        <input id="time" placeholder="Shanba, 19:00">
+      </div>
+      <div>
+        <label>JOY (IXTIYORIY)</label>
+        <input id="place" placeholder="Kafe 'Lola'">
+      </div>
+    </div>
+
+    <label class="switch-row">
+      <span class="toggle"><input type="checkbox" id="allowNo" checked><span class="toggle-slider"></span></span>
+      «Yo'q» javobini yuborish mumkin bo'lsin
+    </label>
+    <p class="hint">Belgilanmasa — «Yo'q» tugmasi qochadi 😏. Belgilansa — mehmon «Yo'q» deb ham javob bera oladi.</p>
+  </div>
+
+  <div class="card">
+    <h3>📍 Joy va vaqt tanlovi</h3>
+    <label class="switch-row">
+      <span class="toggle"><input type="checkbox" id="ltsEnabled"><span class="toggle-slider"></span></span>
+      «Ha»dan keyin mehmon joy va vaqtni tanlasin
+    </label>
+    <p class="hint">Mehmon «Ha» degandan so'ng quyidagi variantlardan birini tanlaydi.</p>
+
+    <label>JOY VARIANTLARI</label>
+    <div class="chips selectable" id="placeOptions">
+      <span class="chip">☕ Kafe</span>
+      <span class="chip">🍽 Restoran</span>
+      <span class="chip">🎬 Kino</span>
+      <span class="chip">🎳 Bowling</span>
+      <span class="chip">🍛 Tushlik</span>
+      <span class="chip">🌳 Sayr</span>
+      <span class="chip">🍦 Muzqaymoq</span>
+      <span class="chip">🎵 Konsert</span>
+    </div>
+
+    <label>VAQT VARIANTLARI (HAR QATORDA BITTADAN)</label>
+    <textarea id="timeOptions" rows="3">Shanba, 18:00
+Yakshanba, 16:00</textarea>
+  </div>
+
+  <div class="card">
+    <h3>✨ Uslub</h3>
+    <div class="style-options">
+      <div class="style-box selected" data-theme="romantik">Romantik<br><small>Script · nozik</small></div>
+      <div class="style-box" data-theme="cute">Cute<br><small>Yumshoq · quvnoq</small></div>
+      <div class="style-box" data-theme="neon">Neon<br><small>To'q · porloq</small></div>
+    </div>
+    <label>RANG</label>
+    <div class="colors">
+      <span class="color-dot selected" style="background:#c2185b" data-color="#c2185b"></span>
+      <span class="color-dot" style="background:#8e24aa" data-color="#8e24aa"></span>
+      <span class="color-dot" style="background:#f4511e" data-color="#f4511e"></span>
+      <span class="color-dot" style="background:#2e7d32" data-color="#2e7d32"></span>
+      <span class="color-dot" style="background:#4e342e" data-color="#4e342e"></span>
+      <span class="color-dot" style="background:#1a237e" data-color="#1a237e"></span>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <button id="previewBtn" class="btn-secondary">Ko'rinishi</button>
+    <button id="createBtn" class="btn-primary">Yaratish ✨</button>
+  </div>
+
+  <div id="resultBox" class="card" style="display:none">
+    <h3>✅ Taklif tayyor!</h3>
+    <div id="tgSentNotice" style="display:none" class="notify-info">
+      📱 Havola Telegram botingizga ham yuborildi!
+    </div>
+    <label>Mehmonga yuborish uchun havola:</label>
+    <div class="link-row">
+      <input id="resultUrl" readonly>
+      <button onclick="copyText('resultUrl')">Nusxalash</button>
+    </div>
+    <img id="qrImg" style="margin-top:10px; border-radius:8px;">
+    <label style="margin-top:14px">Javoblarni ko'rish uchun (faqat sizga):</label>
+    <div class="link-row">
+      <input id="adminUrl" readonly>
+      <button onclick="copyText('adminUrl')">Nusxalash</button>
+    </div>
+  </div>
+</div>
+
+<div id="previewModal" class="modal" style="display:none">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closePreview()">✕</button>
+    <div id="previewContent"></div>
+  </div>
+</div>
+
+<script src="translations.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

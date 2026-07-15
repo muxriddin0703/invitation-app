@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Javoblar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .resp-card { background:white; border-radius:14px; padding:16px; margin-bottom:12px; box-shadow:0 2px 10px rgba(0,0,0,0.06); }
+  .resp-answer { font-size:18px; font-weight:700; margin-bottom:6px; }
+  .resp-answer.yes { color:#27ae60; }
+  .resp-answer.no  { color:#e74c3c; }
+  .resp-meta { font-size:12px; color:#aaa; }
+  .resp-detail { font-size:13px; color:#555; margin-top:4px; }
+  .stat-row { display:flex; gap:12px; margin-bottom:16px; }
+  .stat-box { flex:1; background:white; border-radius:12px; padding:14px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+  .stat-num { font-size:28px; font-weight:700; color:var(--accent); }
+  .stat-label { font-size:11px; color:#aaa; margin-top:2px; }
+  .empty-state { text-align:center; color:#bbb; padding:40px 20px; }
+  .empty-state .big { font-size:48px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1 class="script-title" style="margin-top:20px;">Javoblar</h1>
+  <div id="summary" class="card"></div>
+  <div id="stats" class="stat-row" style="display:none"></div>
+  <div id="responsesList"></div>
+</div>
+<script src="dashboard.js"></script>
+</body>
+</html>
