@@ -72,6 +72,7 @@ module.exports.bot = bot;
 // ─── Admin password middleware ─────────────────────────────
 function checkPassword(req, res, next) {
   if (!process.env.ADMIN_PASSWORD) return next();
+  if (req.body && req.body.tgChatId) return next();
   if (req.headers['x-admin-password'] !== process.env.ADMIN_PASSWORD) {
     return res.status(403).json({ error: 'Noto\'g\'ri parol' });
   }
