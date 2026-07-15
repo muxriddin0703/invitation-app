@@ -173,8 +173,6 @@ app.get('/api/invitations/:id/responses', async (req, res) => {
 });
 
 // ─── HTML routes ───────────────────────────────────────────
-const path = require('path');
-
 app.get('/i/:id',         (req, res) => res.sendFile(path.join(__dirname, 'public', 'invite.html')));
 app.get('/dashboard/:id', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
 app.get('/',              (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
