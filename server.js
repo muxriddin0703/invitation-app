@@ -17,7 +17,16 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.error('MongoDB error:', err.message));
 
 // ─── Telegram Bot ──────────────────────────────────────────
-const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
+const bot = new TelegramBot(process.env.BOT_TOKEN, {
+  polling: {
+    interval: 300,
+    autoStart: true,
+    params: { timeout: 10 }
+  }
+});
+
+process.once('SIGINT',  () => bot.stopPolling());
+process.once('SIGTERM', () => bot.stopPolling());
 const BASE_URL = process.env.BASE_URL; // e.g. https://yourapp.railway.app
 
 // /start command — show mini web app button
