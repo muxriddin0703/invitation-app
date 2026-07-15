@@ -1,4 +1,5 @@
 require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -172,9 +173,11 @@ app.get('/api/invitations/:id/responses', async (req, res) => {
 });
 
 // ─── HTML routes ───────────────────────────────────────────
-app.get('/i/:id',         (req, res) => res.sendFile(__dirname + '/public/invite.html'));
-app.get('/dashboard/:id', (req, res) => res.sendFile(__dirname + '/public/dashboard.html'));
-app.get('/',              (req, res) => res.sendFile(__dirname + '/public/admin.html'));
+const path = require('path');
+
+app.get('/i/:id',         (req, res) => res.sendFile(path.join(__dirname, 'public', 'invite.html')));
+app.get('/dashboard/:id', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
+app.get('/',              (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
