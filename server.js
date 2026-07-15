@@ -8,9 +8,9 @@ const TelegramBot = require('node-telegram-bot-api');
 const Invitation = require('./models/Invitation');
 
 const app = express();
+app.use(express.static('public'));
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
 
 // ─── MongoDB ───────────────────────────────────────────────
 mongoose.connect(process.env.MONGO_URL)
