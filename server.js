@@ -51,7 +51,8 @@ const BASE_URL = process.env.BASE_URL; // e.g. https://yourapp.railway.app
 
 // escape helper for Telegram MarkdownV2 (use to escape dynamic user content)
 function escapeMarkdownV2(text = '') {
-  return String(text).replace(/([_*\[\]()~`>#+\-=\|{}\.!\\])/g, '\\$1');
+  return String(text).replace(/([_*!\[\]()~`>#+\-=
+\|{}\.!\\])/g, '\\$1');
 }
 
 // ─── Telegram send helper ──────────────────────────────────
@@ -97,14 +98,66 @@ bot.onText(/\/start/, (msg) => {
   );
 });
 
-bot.onText(/\/help/, (msg) => {
-  sendTelegramMessage(
-    msg.chat.id,
-    '📖 *Qanday ishlaydi?*\n\n1️⃣ /start → "Taklifnoma yaratish" tugmasini bosing\n2️⃣ Formani to\'ldiring va *Yaratish* tugmasini bosing\n3️⃣ Sizga havola keladi — uni do\'sti bilan bo\'lishing\n4️⃣ Do\'sti javob berganida sizga xabar keladi',
-    { parse_mode: 'Markdown' }
-  );
+// /info command (replaces /help) — prettier with smiles
+bot.onText(/\/info/, (msg) => {
+  const chatId = msg.chat.id;
+  const text = `✨ *Taklifnoma Bot — Ma'lumot*\n\n` +
+    `💌 Bu bot yordamida siz onlayn taklifnoma yaratishingiz va havolasini do'stlaringizga yuborishingiz mumkin.\n\n` +
+    `📌 Qanday ishlaydi:\n` +
+    `1️⃣ /start — Interaktiv formani ochadi (veb tugma)\n` +
+    `2️⃣ Formani to'ldiring va *Yaratish* tugmasini bosing\n` +
+    `3️⃣ Havolani do'stingizga yuboring — javob kelganda sizga xabar beriladi \n\n` +
+    `🔹 Foydali buyruqlar:\n` +
+    `• /start — Taklifnoma yaratish tugmasi\n` +
+    `• /invite — Tez taklifnoma yaratish tugmasi\n` +
+    `• /myinvites — Oxirgi taklifnomalaringiz ro'yxati\n` +
+    `• /stats — Taklifnomalaringiz soni\n\n` +
+    `😊 Muvaffaqiyat tilaymiz! Do'stlaringizni chaqiring va zavqlaning ✨`;
+
+  sendTelegramMessage(chatId, text, { parse_mode: 'Markdown', disable_web_page_preview: true });
 });
 
+// /invite — quick open of the web app form (same as start button)
+bot.onText(/\/invite/, (msg) => {
+  const chatId = msg.chat.id;
+  sendTelegramMessage(chatId, '✨ Taklifnoma yaratish uchun quyidagi tugmani bosing:', {
+    parse_mode: 'Markdown',
+    reply_markup: {
+      inline_keyboard: [[
+        { text: '✨ Taklifnoma yaratish', web_app: { url: `${BASE_URL}/?tg_id=${chatId}` } }
+      ]]
+    }
+  });
+});
+
+// /about — short about text
+bot.onText(/\/about/, (msg) => {
+  const chatId = msg.chat.id;
+  const text = `📚 *Taklifnoma App*\n\n` +
+    `Bu kichik loyiha oddiy va tez taklifnomalar yaratish uchun mo'ljallangan.\n` +
+    `Havolani yuboring, mehmon javobini qabul qiling va natijalarni boshqaruv panelida ko'ring.\n\n` +
+    `Agar biron muammo bo'lsa, konsol loglarini tekshiring yoki admin sozlamalarini yangilang.`;
+  sendTelegramMessage(chatId, text, { parse_mode: 'Markdown' });
+});
+
+// /stats — show simple counts for this user's invites
+bot.onText(/\/stats/, async (msg) => {
+  const chatId = msg.chat.id;
+  try {
+    const total = await Invitation.countDocuments({ tgChatId: String(chatId) });
+    const answered = await Invitation.countDocuments({ tgChatId: String(chatId), 'responses.0': { $exists: true } });
+    const text = `📊 *Statistika*\n\n` +
+      `🔹 Umumiy taklifnomalar: *${total}*\n` +
+      `🔹 Javob kelgan taklifnomalar: *${answered}*\n\n` +
+      `/myinvites yordamida batafsil ko'rishingiz mumkin.`;
+    sendTelegramMessage(chatId, text, { parse_mode: 'Markdown' });
+  } catch (err) {
+    console.error('❌ /stats error:', err.message);
+    sendTelegramMessage(chatId, '❌ Xatolik yuz berdi. Keyinroq qayta urinib ko\'ring.');
+  }
+});
+
+// /myinvites (fixed and cleaned up)
 bot.onText(/\/myinvites/, async (msg) => {
   const chatId = msg.chat.id;
   try {
@@ -217,7 +270,7 @@ app.post('/api/invitations/:id/respond', async (req, res) => {
       let notifText = `🔔 *${escapeMarkdownV2(inv.to)}* dan javob keldi!\n\n${answerEmoji}`;
       if (place) notifText += `\n📍 Joy: *${escapeMarkdownV2(place)}*`;
       if (time)  notifText += `\n🕐 Vaqt: *${escapeMarkdownV2(time)}*`;
-      if (newDodgeCount > 0) notifText += `\n😅 \"Yo'\q\" tugmasidan qochdi: ${newDodgeCount} marta`;
+      if (newDodgeCount > 0) notifText += `\n😅 "Yo'q" tugmasidan qochdi: ${newDodgeCount} marta`;
       notifText += `\n\nBarcha javoblarni ko'rish:\n${BASE_URL}/dashboard/${inv.id}?key=${inv.adminKey}`;
 
       await sendTelegramMessage(inv.tgChatId, notifText, {
