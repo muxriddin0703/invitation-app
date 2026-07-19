@@ -51,8 +51,7 @@ const BASE_URL = process.env.BASE_URL; // e.g. https://yourapp.railway.app
 
 // escape helper for Telegram MarkdownV2 (use to escape dynamic user content)
 function escapeMarkdownV2(text = '') {
-  return String(text).replace(/([_*!\[\]()~`>#+\-=
-\|{}\.!\\])/g, '\\$1');
+  return String(text).replace(/([_*!\[\]()~`>#+\-=|{}\.!\\])/g, '\\$1');
 }
 
 // ─── Telegram send helper ──────────────────────────────────
