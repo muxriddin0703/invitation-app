@@ -10,11 +10,13 @@ async function load() {
     invitation = await res.json();
     t = translations[invitation.language] || translations.uz;
     render();
-  } catch(e) {
+  } catch (e) {
     document.getElementById('app').innerHTML = `
       <div class="invite-card">
-        <span class="big" style="display:block;text-align:center;font-size:48px;margin-bottom:12px">💔</span>
-        <p style="text-align:center;color:#999">Taklifnoma topilmadi</p>
+        <div class="not-found-wrapper">
+          <span class="not-found-icon">💔</span>
+          <p class="not-found-text">Taklifnoma topilmadi</p>
+        </div>
       </div>`;
   }
 }
@@ -44,7 +46,7 @@ function render() {
         <button id="btnYes" class="btn-yes">✨ ${t.yes}</button>
         <button id="btnNo"  class="btn-no">${t.no}</button>
       </div>
-      <div id="followUp" style="width:100%"></div>
+      <div id="followUp" class="follow-up-container"></div>
     </div>
   `;
 
@@ -72,7 +74,7 @@ function setupDodge(btn) {
     const bw = btn.offsetWidth;
     const bh = btn.offsetHeight;
     btn.style.left = Math.random() * Math.max(cw - bw, 10) + 'px';
-    btn.style.top  = Math.random() * Math.max(ch - bh, 10) + 'px';
+    btn.style.top = Math.random() * Math.max(ch - bh, 10) + 'px';
     btn.style.right = 'auto';
   };
   btn.addEventListener('mouseenter', moveAway);
@@ -82,7 +84,7 @@ function setupDodge(btn) {
 function onYes() {
   const lts = invitation.locationTimeSelection;
   const hasPlaces = lts && lts.enabled && lts.placeOptions && lts.placeOptions.length > 0;
-  const hasTimes  = lts && lts.enabled && lts.timeOptions  && lts.timeOptions.length  > 0;
+  const hasTimes = lts && lts.enabled && lts.timeOptions && lts.timeOptions.length > 0;
 
   if (!hasPlaces && !hasTimes) {
     submit('ha', invitation.place || '', invitation.time || '');
@@ -109,13 +111,13 @@ function onYes() {
     html += `</div>`;
   }
 
-  html += `<button id="confirmBtn" class="btn-confirm" style="margin-top:20px">💗 ${t.confirm}</button>`;
-  html += `<button id="backBtn" style="display:block;width:100%;margin-top:10px;background:none;border:none;color:#aaa;font-size:13px;cursor:pointer;font-family:inherit">← Orqaga</button>`;
+  html += `<button id="confirmBtn" class="btn-confirm">💗 ${t.confirm}</button>`;
+  html += `<button id="backBtn" class="back-button">← Orqaga</button>`;
 
   document.getElementById('followUp').innerHTML = html;
 
   let chosenPlace = '';
-  let chosenTime  = '';
+  let chosenTime = '';
 
   document.querySelectorAll('[data-type="place"]').forEach(el => {
     el.addEventListener('click', () => {
@@ -135,7 +137,7 @@ function onYes() {
 
   document.getElementById('confirmBtn').addEventListener('click', () => {
     if (hasPlaces && !chosenPlace) { alert('Iltimos, joy tanlang 📍'); return; }
-    if (hasTimes  && !chosenTime)  { alert('Iltimos, vaqt tanlang 🕐'); return; }
+    if (hasTimes && !chosenTime) { alert('Iltimos, vaqt tanlang 🕐'); return; }
     submit('ha', chosenPlace, chosenTime);
   });
 
@@ -156,19 +158,19 @@ async function submit(answer, place, time) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ answer, place, time, noAttempts: noDodgeCount })
     });
-  } catch(e) {}
+  } catch (e) {}
 
   const isYes = answer === 'ha';
-  const icon  = isYes ? '🥰' : '💙';
-  const msg   = isYes ? t.thanksYes : t.thanksNo;
+  const icon = isYes ? '🥰' : '💙';
+  const msg = isYes ? t.thanksYes : t.thanksNo;
   let sub = '';
   if (isYes && place) sub += `📍 ${place}`;
-  if (isYes && time)  sub += (sub ? '&nbsp;&nbsp;' : '') + `🕐 ${time}`;
+  if (isYes && time) sub += (sub ? '&nbsp;&nbsp;' : '') + `🕐 ${time}`;
 
   document.getElementById('app').innerHTML = `
     <span class="invite-bg-heart tl">💗</span>
     <span class="invite-bg-heart br">💗</span>
-    <div class="invite-card" style="animation:cardIn .4s ease">
+    <div class="invite-card">
       <div class="thanks-wrap">
         <span class="thanks-icon">${icon}</span>
         <p class="thanks">${msg}</p>
