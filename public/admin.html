@@ -7,13 +7,130 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
 <style>
-  .tg-badge { background:#229ED9; color:white; border-radius:20px; padding:6px 14px; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:6px; margin-bottom:12px; }
-  .tg-badge svg { width:16px; height:16px; fill:white; }
-  .notify-info { background:#e8f5fe; border-left:3px solid #229ED9; border-radius:8px; padding:10px 14px; font-size:12px; color:#1a6fa8; margin-bottom:12px; }
+  /* ── Telegram badge ── */
+  .tg-badge {
+    background: linear-gradient(135deg, #229ED9, #1a8bbf);
+    color: white;
+    border-radius: 999px;
+    padding: 7px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(34,158,217,0.25);
+    letter-spacing: 0.2px;
+  }
+  .tg-badge svg {
+    width: 16px;
+    height: 16px;
+    fill: white;
+    flex-shrink: 0;
+  }
+
+  /* ── Notify info bar ── */
+  .notify-info {
+    background: #edf7fe;
+    border-left: 3px solid #229ED9;
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 12px;
+    color: #1565a8;
+    margin-bottom: 4px;
+    line-height: 1.6;
+  }
+
+  /* ── Section title inside card ── */
+  .card h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ── Result card ── */
+  #resultBox {
+    border: 1.5px solid #d4edda;
+    background: linear-gradient(135deg, #f6fff9 0%, #ffffff 100%);
+  }
+  #resultBox h3 {
+    color: #1e7e34;
+  }
+
+  /* ── QR image ── */
+  #qrImg {
+    display: block;
+    margin: 14px auto 4px;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+    max-width: 180px;
+  }
+
+  /* ── History item ── */
+  .history-item {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    line-height: 1.7;
+    color: #555;
+  }
+  .history-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .history-item a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .history-item a:hover {
+    text-decoration: underline;
+  }
+
+  /* ── Selectable place chips ── */
+  #placeOptions .chip.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    box-shadow: 0 4px 10px rgba(194,24,91,0.18);
+  }
+
+  /* ── Message/question chip hover ── */
+  #messageChips .chip:hover,
+  #questionChips .chip:hover {
+    background: #fde2ec;
+    transform: translateY(-1px);
+  }
+
+  /* ── Preview modal inner card ── */
+  #previewContent .invite-card {
+    margin: 0 auto;
+    max-width: 400px;
+  }
+
+  /* ── Bottom bar safe area (iOS) ── */
+  .bottom-bar {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  /* ── Smooth reveal for result box ── */
+  #resultBox {
+    animation: fadeSlideUp 0.35s ease both;
+  }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 </style>
 </head>
 <body>
 <div class="container">
+
+  <!-- Top language bar -->
   <div class="top-bar">
     <span class="lang-label">TIL</span>
     <div class="lang-switch">
@@ -23,13 +140,23 @@
     </div>
   </div>
 
+  <!-- Hero -->
   <p class="eyebrow">— UCHRASHUV TAKLIFNOMASI —</p>
   <h1 class="script-title">Taklif yarating</h1>
   <p class="subtitle">Maxsus insoningizga chiroyli taklif — xat + «Ha / Yo'q» 💗</p>
 
+  <!-- Telegram notice -->
   <div id="tgNotice" style="display:none" class="card">
     <div class="tg-badge">
-      <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.19 13.664l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.958.895z"/></svg>
+      <svg viewBox="0 0 24 24">
+        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12
+                 12-5.373 12-12S18.627 0 12 0zm5.894 8.221
+                 -1.97 9.28c-.145.658-.537.818-1.084.508
+                 l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295
+                 l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12
+                 L7.19 13.664l-2.96-.924c-.643-.204-.657-.643.136-.953
+                 l11.57-4.461c.537-.194 1.006.131.958.895z"/>
+      </svg>
       Telegram orqali ulangan
     </div>
     <div class="notify-info">
@@ -37,13 +164,16 @@
     </div>
   </div>
 
+  <!-- History -->
   <div id="historyBox" style="display:none" class="card">
     <h3>🕘 Oldingi takliflaringiz</h3>
     <div id="historyList"></div>
   </div>
 
+  <!-- Main fields -->
   <div class="card">
-    <h3>💬 Asosiy</h3>
+    <h3>💬 Asosiy ma'lumotlar</h3>
+
     <div class="row">
       <div>
         <label>KIMDAN (SIZNING ISMINGIZ)</label>
@@ -82,20 +212,33 @@
       </div>
     </div>
 
-    <label class="switch-row">
-      <span class="toggle"><input type="checkbox" id="allowNo" checked><span class="toggle-slider"></span></span>
+    <label class="switch-row" style="margin-top:16px">
+      <span class="toggle">
+        <input type="checkbox" id="allowNo" checked>
+        <span class="toggle-slider"></span>
+      </span>
       «Yo'q» javobini yuborish mumkin bo'lsin
     </label>
-    <p class="hint">Belgilanmasa — «Yo'q» tugmasi qochadi 😏. Belgilansa — mehmon «Yo'q» deb ham javob bera oladi.</p>
+    <p class="hint">
+      Belgilanmasa — «Yo'q» tugmasi qochadi 😏.<br>
+      Belgilansa — mehmon «Yo'q» deb ham javob bera oladi.
+    </p>
   </div>
 
+  <!-- Place & time selection -->
   <div class="card">
     <h3>📍 Joy va vaqt tanlovi</h3>
+
     <label class="switch-row">
-      <span class="toggle"><input type="checkbox" id="ltsEnabled"><span class="toggle-slider"></span></span>
+      <span class="toggle">
+        <input type="checkbox" id="ltsEnabled">
+        <span class="toggle-slider"></span>
+      </span>
       «Ha»dan keyin mehmon joy va vaqtni tanlasin
     </label>
-    <p class="hint">Mehmon «Ha» degandan so'ng quyidagi variantlardan birini tanlaydi.</p>
+    <p class="hint" style="margin-bottom:4px">
+      Mehmon «Ha» degandan so'ng quyidagi variantlardan birini tanlaydi.
+    </p>
 
     <label>JOY VARIANTLARI</label>
     <div class="chips selectable" id="placeOptions">
@@ -110,52 +253,70 @@
     </div>
 
     <label>VAQT VARIANTLARI (HAR QATORDA BITTADAN)</label>
-    <textarea id="timeOptions" rows="3">Shanba, 18:00
+    <textarea id="timeOptions" rows="3" placeholder="Shanba, 18:00&#10;Yakshanba, 16:00">Shanba, 18:00
 Yakshanba, 16:00</textarea>
   </div>
 
+  <!-- Style -->
   <div class="card">
     <h3>✨ Uslub</h3>
     <div class="style-options">
-      <div class="style-box selected" data-theme="romantik">Romantik<br><small>Script · nozik</small></div>
-      <div class="style-box" data-theme="cute">Cute<br><small>Yumshoq · quvnoq</small></div>
-      <div class="style-box" data-theme="neon">Neon<br><small>To'q · porloq</small></div>
+      <div class="style-box selected" data-theme="romantik">
+        Romantik
+        <small>Script · nozik</small>
+      </div>
+      <div class="style-box" data-theme="cute">
+        Cute
+        <small>Yumshoq · quvnoq</small>
+      </div>
+      <div class="style-box" data-theme="neon">
+        Neon
+        <small>To'q · porloq</small>
+      </div>
     </div>
+
     <label>RANG</label>
     <div class="colors">
-      <span class="color-dot selected" style="background:#c2185b" data-color="#c2185b"></span>
-      <span class="color-dot" style="background:#8e24aa" data-color="#8e24aa"></span>
-      <span class="color-dot" style="background:#f4511e" data-color="#f4511e"></span>
-      <span class="color-dot" style="background:#2e7d32" data-color="#2e7d32"></span>
-      <span class="color-dot" style="background:#4e342e" data-color="#4e342e"></span>
-      <span class="color-dot" style="background:#1a237e" data-color="#1a237e"></span>
+      <span class="color-dot selected" style="background:#c2185b" data-color="#c2185b" title="Qizil-binafsha"></span>
+      <span class="color-dot" style="background:#8e24aa" data-color="#8e24aa" title="Binafsha"></span>
+      <span class="color-dot" style="background:#f4511e" data-color="#f4511e" title="To'q sariq"></span>
+      <span class="color-dot" style="background:#2e7d32" data-color="#2e7d32" title="Yashil"></span>
+      <span class="color-dot" style="background:#4e342e" data-color="#4e342e" title="Jigarrang"></span>
+      <span class="color-dot" style="background:#1a237e" data-color="#1a237e" title="Ko'k"></span>
     </div>
   </div>
 
+  <!-- Bottom bar -->
   <div class="bottom-bar">
-    <button id="previewBtn" class="btn-secondary">Ko'rinishi</button>
+    <button id="previewBtn" class="btn-secondary">👁 Ko'rinishi</button>
     <button id="createBtn" class="btn-primary">Yaratish ✨</button>
   </div>
 
+  <!-- Result -->
   <div id="resultBox" class="card" style="display:none">
     <h3>✅ Taklif tayyor!</h3>
     <div id="tgSentNotice" style="display:none" class="notify-info">
       📱 Havola Telegram botingizga ham yuborildi!
     </div>
+
     <label>Mehmonga yuborish uchun havola:</label>
     <div class="link-row">
       <input id="resultUrl" readonly>
-      <button onclick="copyText('resultUrl')">Nusxalash</button>
+      <button onclick="copyText('resultUrl')">📋 Nusxalash</button>
     </div>
-    <img id="qrImg" style="margin-top:10px; border-radius:8px;">
-    <label style="margin-top:14px">Javoblarni ko'rish uchun (faqat sizga):</label>
+
+    <img id="qrImg" alt="QR kod">
+
+    <label style="margin-top:16px">Javoblarni ko'rish uchun (faqat sizga):</label>
     <div class="link-row">
       <input id="adminUrl" readonly>
-      <button onclick="copyText('adminUrl')">Nusxalash</button>
+      <button onclick="copyText('adminUrl')">📋 Nusxalash</button>
     </div>
   </div>
-</div>
 
+</div><!-- /container -->
+
+<!-- Preview modal -->
 <div id="previewModal" class="modal" style="display:none">
   <div class="modal-content">
     <button class="modal-close" onclick="closePreview()">✕</button>
