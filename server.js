@@ -49,9 +49,13 @@ process.once('SIGTERM', () => bot.stopPolling());
 
 const BASE_URL = process.env.BASE_URL; // e.g. https://yourapp.railway.app
 
+// escape helper for Telegram MarkdownV2 (use to escape dynamic user content)
+function escapeMarkdownV2(text = '') {
+  return String(text).replace(/([_*\[\]()~`>#+\-=\|{}\.!\\])/g, '\\$1');
+}
+
 // ─── Telegram send helper ──────────────────────────────────
-// FIX (Issue 2): centralized helper that awaits the send, logs all errors,
-// and never silently swallows failures.
+// Centralized helper that awaits the send and logs all errors.
 async function sendTelegramMessage(chatId, text, options = {}) {
   if (!process.env.BOT_TOKEN) {
     console.warn('⚠️  Telegram notification skipped: BOT_TOKEN is not set.');
@@ -62,6 +66,9 @@ async function sendTelegramMessage(chatId, text, options = {}) {
     return;
   }
   try {
+    // Normalize requested markdown mode to MarkdownV2 when provided.
+    if (options.parse_mode === 'Markdown') options.parse_mode = 'MarkdownV2';
+
     await bot.sendMessage(chatId, text, options);
     console.log(`✅ Telegram notification sent to chatId=${chatId}`);
   } catch (err) {
@@ -93,7 +100,7 @@ bot.onText(/\/start/, (msg) => {
 bot.onText(/\/help/, (msg) => {
   sendTelegramMessage(
     msg.chat.id,
-    '📖 *Qanday ishlaydi?*\n\n1️⃣ /start → \"Taklifnoma yaratish\" tugmasini bosing\n2️⃣ Formani to\'ldiring va *Yaratish* tugmasini bosing\n3️⃣ Sizga havola keladi — uni do\'stingizga yuboring\n4️⃣ Do\'stingiz javob berganda *sizga xabar keladi* ✅\n\n/myinvites — yaratilgan taklifnomalarim',
+    '📖 *Qanday ishlaydi?*\n\n1️⃣ /start → "Taklifnoma yaratish" tugmasini bosing\n2️⃣ Formani to\'ldiring va *Yaratish* tugmasini bosing\n3️⃣ Sizga havola keladi — uni do\'sti bilan bo\'lishing\n4️⃣ Do\'sti javob berganida sizga xabar keladi',
     { parse_mode: 'Markdown' }
   );
 });
@@ -108,7 +115,9 @@ bot.onText(/\/myinvites/, async (msg) => {
     let text = '📋 *Sizning taklifnomalaringiz:*\n\n';
     list.forEach((inv, i) => {
       const resp = inv.responses.length;
-      text += `${i+1}. *${inv.to}*\n   📅 ${new Date(inv.createdAt).toLocaleDateString('uz')}\n   💬 Javoblar: ${resp}\n   🔗 [Taklifnoma](${BASE_URL}/i/${inv.id}) | [Javoblar](${BASE_URL}/dashboard/${inv.id}?key=${inv.adminKey})\n\n`;
+      const inviteUrl = `${BASE_URL}/i/${inv.id}`;
+      const responsesUrl = `${BASE_URL}/dashboard/${inv.id}?key=${inv.adminKey}`;
+      text += `${i+1}. *${escapeMarkdownV2(inv.to)}*\n   📅 ${new Date(inv.createdAt).toLocaleDateString('uz')}\n   💬 Javoblar: ${resp}\n   🔗 Taklifnoma: ${inviteUrl}\n   📊 Javoblar: ${responsesUrl}\n\n`;
     });
     sendTelegramMessage(chatId, text, { parse_mode: 'Markdown', disable_web_page_preview: true });
   } catch (err) {
@@ -149,11 +158,12 @@ app.post('/api/invitations', checkPassword, async (req, res) => {
     const dashUrl   = `${BASE_URL}/dashboard/${id}?key=${adminKey}`;
 
     // FIX (Issue 2): await the Telegram notification so errors surface in logs;
-    // use the centralized helper that logs failures instead of swallowing them.
+    // escape dynamic pieces to avoid Markdown parsing errors and put URLs on their own lines
     if (tgChatId) {
+      const body = `✅ *Taklifnoma yaratildi!*\n\n👤 Kimga: *${escapeMarkdownV2(inv.to)}*\n\n📨 Havola (do'stingizga yuboring):\n${inviteUrl}\n\n📊 Javoblarni ko'rish:\n${dashUrl}`;
       await sendTelegramMessage(
         tgChatId,
-        `✅ *Taklifnoma yaratildi!*\n\n👤 Kimga: *${inv.to}*\n\n📨 *Havola (do'stingizga yuboring):*\n${inviteUrl}\n\n📊 *Javoblarni ko'rish:*\n${dashUrl}`,
+        body,
         {
           parse_mode: 'Markdown',
           reply_markup: {
@@ -201,14 +211,14 @@ app.post('/api/invitations/:id/respond', async (req, res) => {
     if (newDodgeCount > 0) inv.noAttempts += newDodgeCount;
     await inv.save();
 
-    // FIX (Issue 2): await the notification; use centralized helper with logging.
+    // FIX (Issue 2): await the notification; escape dynamic pieces before inserting into text
     if (inv.tgChatId) {
-      const answerEmoji = answer === 'ha' ? '✅ HA' : '❌ YO\'Q';
-      let notifText = `🔔 *${inv.to}* dan javob keldi!\n\n${answerEmoji}`;
-      if (place) notifText += `\n📍 Joy: *${place}*`;
-      if (time)  notifText += `\n🕐 Vaqt: *${time}*`;
-      if (newDodgeCount > 0) notifText += `\n😅 "Yo'q" tugmasidan qochdi: ${newDodgeCount} marta`;
-      notifText += `\n\n[Barcha javoblarni ko'rish](${BASE_URL}/dashboard/${inv.id}?key=${inv.adminKey})`;
+      const answerEmoji = answer === 'ha' ? '✅ HA' : "❌ YO'Q";
+      let notifText = `🔔 *${escapeMarkdownV2(inv.to)}* dan javob keldi!\n\n${answerEmoji}`;
+      if (place) notifText += `\n📍 Joy: *${escapeMarkdownV2(place)}*`;
+      if (time)  notifText += `\n🕐 Vaqt: *${escapeMarkdownV2(time)}*`;
+      if (newDodgeCount > 0) notifText += `\n😅 \"Yo'\q\" tugmasidan qochdi: ${newDodgeCount} marta`;
+      notifText += `\n\nBarcha javoblarni ko'rish:\n${BASE_URL}/dashboard/${inv.id}?key=${inv.adminKey}`;
 
       await sendTelegramMessage(inv.tgChatId, notifText, {
         parse_mode: 'Markdown',
