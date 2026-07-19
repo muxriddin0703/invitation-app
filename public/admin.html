@@ -7,7 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
 <style>
-  /* ── Telegram badge ── */
   .tg-badge {
     background: linear-gradient(135deg, #229ED9, #1a8bbf);
     color: white;
@@ -28,8 +27,6 @@
     fill: white;
     flex-shrink: 0;
   }
-
-  /* ── Notify info bar ── */
   .notify-info {
     background: #edf7fe;
     border-left: 3px solid #229ED9;
@@ -40,8 +37,6 @@
     margin-bottom: 4px;
     line-height: 1.6;
   }
-
-  /* ── Section title inside card ── */
   .card h3 {
     font-size: 13px;
     font-weight: 700;
@@ -51,17 +46,12 @@
     align-items: center;
     gap: 6px;
   }
-
-  /* ── Result card ── */
   #resultBox {
     border: 1.5px solid #d4edda;
     background: linear-gradient(135deg, #f6fff9 0%, #ffffff 100%);
+    animation: fadeSlideUp 0.35s ease both;
   }
-  #resultBox h3 {
-    color: #1e7e34;
-  }
-
-  /* ── QR image ── */
+  #resultBox h3 { color: #1e7e34; }
   #qrImg {
     display: block;
     margin: 14px auto 4px;
@@ -69,8 +59,6 @@
     box-shadow: 0 6px 20px rgba(0,0,0,0.07);
     max-width: 180px;
   }
-
-  /* ── History item ── */
   .history-item {
     padding: 10px 0;
     border-bottom: 1px solid var(--border);
@@ -87,39 +75,20 @@
     text-decoration: none;
     font-weight: 600;
   }
-  .history-item a:hover {
-    text-decoration: underline;
-  }
-
-  /* ── Selectable place chips ── */
+  .history-item a:hover { text-decoration: underline; }
   #placeOptions .chip.active {
     background: var(--accent);
     color: white;
     border-color: var(--accent);
     box-shadow: 0 4px 10px rgba(194,24,91,0.18);
   }
-
-  /* ── Message/question chip hover ── */
   #messageChips .chip:hover,
   #questionChips .chip:hover {
     background: #fde2ec;
     transform: translateY(-1px);
   }
-
-  /* ── Preview modal inner card ── */
-  #previewContent .invite-card {
-    margin: 0 auto;
-    max-width: 400px;
-  }
-
-  /* ── Bottom bar safe area (iOS) ── */
   .bottom-bar {
     padding-bottom: max(12px, env(safe-area-inset-bottom));
-  }
-
-  /* ── Smooth reveal for result box ── */
-  #resultBox {
-    animation: fadeSlideUp 0.35s ease both;
   }
   @keyframes fadeSlideUp {
     from { opacity: 0; transform: translateY(14px); }
@@ -129,16 +98,6 @@
 </head>
 <body>
 <div class="container">
-
-  <!-- Top language bar -->
-  <div class="top-bar">
-    <span class="lang-label">TIL</span>
-    <div class="lang-switch">
-      <button class="lang-btn active" data-lang="uz">UZ</button>
-      <button class="lang-btn" data-lang="ru">RU</button>
-      <button class="lang-btn" data-lang="en">EN</button>
-    </div>
-  </div>
 
   <!-- Hero -->
   <p class="eyebrow">— UCHRASHUV TAKLIFNOMASI —</p>
@@ -187,11 +146,7 @@
 
     <label>XAT / XABAR</label>
     <textarea id="message" rows="4">Sizni ko'rgan kunimdan beri qalbimda iliqlik paydo bo'ldi. Agar ruxsat bersangiz, birga chiroyli lahzalarni baham ko'rishni istardim.</textarea>
-    <div class="chips" id="messageChips">
-      <span class="chip">Sizni ko'rgan kunimdan beri qalbimda iliqlik paydo bo'ldi...</span>
-      <span class="chip">Har bir kun Siz bilan yanada mazmunli bo'lardi...</span>
-      <span class="chip">Sizning tabassumingiz menga ilhom beradi...</span>
-    </div>
+    <div class="chips" id="messageChips"></div>
 
     <label>SAVOL</label>
     <input id="question" value="Men bilan uchrashishga rozi bo'lasizmi?">
@@ -255,35 +210,6 @@
     <label>VAQT VARIANTLARI (HAR QATORDA BITTADAN)</label>
     <textarea id="timeOptions" rows="3" placeholder="Shanba, 18:00&#10;Yakshanba, 16:00">Shanba, 18:00
 Yakshanba, 16:00</textarea>
-  </div>
-
-  <!-- Style -->
-  <div class="card">
-    <h3>✨ Uslub</h3>
-    <div class="style-options">
-      <div class="style-box selected" data-theme="romantik">
-        Romantik
-        <small>Script · nozik</small>
-      </div>
-      <div class="style-box" data-theme="cute">
-        Cute
-        <small>Yumshoq · quvnoq</small>
-      </div>
-      <div class="style-box" data-theme="neon">
-        Neon
-        <small>To'q · porloq</small>
-      </div>
-    </div>
-
-    <label>RANG</label>
-    <div class="colors">
-      <span class="color-dot selected" style="background:#c2185b" data-color="#c2185b" title="Qizil-binafsha"></span>
-      <span class="color-dot" style="background:#8e24aa" data-color="#8e24aa" title="Binafsha"></span>
-      <span class="color-dot" style="background:#f4511e" data-color="#f4511e" title="To'q sariq"></span>
-      <span class="color-dot" style="background:#2e7d32" data-color="#2e7d32" title="Yashil"></span>
-      <span class="color-dot" style="background:#4e342e" data-color="#4e342e" title="Jigarrang"></span>
-      <span class="color-dot" style="background:#1a237e" data-color="#1a237e" title="Ko'k"></span>
-    </div>
   </div>
 
   <!-- Bottom bar -->
