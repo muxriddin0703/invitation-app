@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const InvitationSchema = new mongoose.Schema({
-  id:       { type: String, unique: true },
+  id:       { type: String, unique: true, required: true },
   adminKey: String,
   tgChatId: String,   // Telegram chat ID of creator — for notifications
   from:     String,
@@ -29,6 +29,7 @@ const InvitationSchema = new mongoose.Schema({
     guestName:   String,
     respondedAt: { type: Date, default: Date.now }
   }],
+  completed: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }
 });
 
