@@ -8,7 +8,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const Invitation = require('./models/Invitation');
 
 const app = express();
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 app.use(express.json());
 
@@ -175,7 +175,7 @@ app.get('/api/invitations/:id/responses', async (req, res) => {
 // ─── HTML routes ───────────────────────────────────────────
 app.get('/i/:id',         (req, res) => res.sendFile(path.join(__dirname, 'public', 'invite.html')));
 app.get('/dashboard/:id', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
-app.get('/',              (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
+app.get('*',              (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
