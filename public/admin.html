@@ -90,6 +90,37 @@
   .bottom-bar {
     padding-bottom: max(12px, env(safe-area-inset-bottom));
   }
+  .link-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .link-row input {
+    flex: 1;
+    font-size: 13px;
+    color: #666;
+  }
+  .link-row button {
+    padding: 10px 16px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(194, 24, 91, 0.15);
+  }
+  .link-row button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(194, 24, 91, 0.25);
+  }
+  .link-row button:active {
+    transform: scale(0.98);
+  }
   @keyframes fadeSlideUp {
     from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: translateY(0); }
