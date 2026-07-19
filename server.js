@@ -51,7 +51,7 @@ const BASE_URL = process.env.BASE_URL; // e.g. https://yourapp.railway.app
 
 // escape helper for Telegram MarkdownV2 (use to escape dynamic user content)
 function escapeMarkdownV2(text = '') {
-  return String(text).replace(/([_*!\[\]()~`>#+\-=|{}\.!\\])/g, '\\$1');
+  return String(text).replace(/([_*![\]()~`>#+=\-|{}\.\\])/g, '\\$1');
 }
 
 // ─── Telegram send helper ──────────────────────────────────
@@ -103,7 +103,7 @@ bot.onText(/\/info/, (msg) => {
   const text = `✨ *Taklifnoma Bot — Ma'lumot*\n\n` +
     `💌 Bu bot yordamida siz onlayn taklifnoma yaratishingiz va havolasini do'stlaringizga yuborishingiz mumkin.\n\n` +
     `📌 Qanday ishlaydi:\n` +
-    `1️⃣ /start — Interaktiv formani ochadi (veb tugma)\n` +
+    `1️⃣ /start — Interaktiv formani ochadi \\(veb tugma\\)\n` +
     `2️⃣ Formani to'ldiring va *Yaratish* tugmasini bosing\n` +
     `3️⃣ Havolani do'stingizga yuboring — javob kelganda sizga xabar beriladi \n\n` +
     `🔹 Foydali buyruqlar:\n` +
@@ -111,9 +111,9 @@ bot.onText(/\/info/, (msg) => {
     `• /invite — Tez taklifnoma yaratish tugmasi\n` +
     `• /myinvites — Oxirgi taklifnomalaringiz ro'yxati\n` +
     `• /stats — Taklifnomalaringiz soni\n\n` +
-    `😊 Muvaffaqiyat tilaymiz! Do'stlaringizni chaqiring va zavqlaning ✨`;
+    `😊 Muvaffaqiyat tilaymiz\\! Do'stlaringizni chaqiring va zavqlaning ✨`;
 
-  sendTelegramMessage(chatId, text, { parse_mode: 'Markdown', disable_web_page_preview: true });
+  sendTelegramMessage(chatId, text, { parse_mode: 'MarkdownV2', disable_web_page_preview: true });
 });
 
 // /invite — quick open of the web app form (same as start button)
@@ -212,12 +212,12 @@ app.post('/api/invitations', checkPassword, async (req, res) => {
     // FIX (Issue 2): await the Telegram notification so errors surface in logs;
     // escape dynamic pieces to avoid Markdown parsing errors and put URLs on their own lines
     if (tgChatId) {
-      const body = `✅ *Taklifnoma yaratildi!*\n\n👤 Kimga: *${escapeMarkdownV2(inv.to)}*\n\n📨 Havola (do'stingizga yuboring):\n${inviteUrl}\n\n📊 Javoblarni ko'rish:\n${dashUrl}`;
+      const body = `✅ *Taklifnoma yaratildi\\!*\n\n👤 Kimga: *${escapeMarkdownV2(inv.to)}*\n\n📨 Havola \\(do'stingizga yuboring\\):\n${inviteUrl}\n\n📊 Javoblarni ko'rish:\n${dashUrl}`;
       await sendTelegramMessage(
         tgChatId,
         body,
         {
-          parse_mode: 'Markdown',
+          parse_mode: 'MarkdownV2',
           reply_markup: {
             inline_keyboard: [
               [{ text: '📤 Havolani ulashish', switch_inline_query: inviteUrl }],
@@ -266,14 +266,14 @@ app.post('/api/invitations/:id/respond', async (req, res) => {
     // FIX (Issue 2): await the notification; escape dynamic pieces before inserting into text
     if (inv.tgChatId) {
       const answerEmoji = answer === 'ha' ? '✅ HA' : "❌ YO'Q";
-      let notifText = `🔔 *${escapeMarkdownV2(inv.to)}* dan javob keldi!\n\n${answerEmoji}`;
+      let notifText = `🔔 *${escapeMarkdownV2(inv.to)}* dan javob keldi\\!\n\n${answerEmoji}`;
       if (place) notifText += `\n📍 Joy: *${escapeMarkdownV2(place)}*`;
       if (time)  notifText += `\n🕐 Vaqt: *${escapeMarkdownV2(time)}*`;
       if (newDodgeCount > 0) notifText += `\n😅 "Yo'q" tugmasidan qochdi: ${newDodgeCount} marta`;
       notifText += `\n\nBarcha javoblarni ko'rish:\n${BASE_URL}/dashboard/${inv.id}?key=${inv.adminKey}`;
 
       await sendTelegramMessage(inv.tgChatId, notifText, {
-        parse_mode: 'Markdown',
+        parse_mode: 'MarkdownV2',
         disable_web_page_preview: true
       });
     }
@@ -319,7 +319,7 @@ async function cleanupOldInvitations() {
       ]
     });
     if (result.deletedCount > 0) {
-      console.log(`🗑  Cleanup: deleted ${result.deletedCount} old/answered invitation(s).`);
+      console.log(`🗑  Cleanup: deleted ${result.deletedCount} old/answered invitation\\(s\\).`);
     }
   } catch (err) {
     console.error('❌ Cleanup error:', err.message);
