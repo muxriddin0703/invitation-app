@@ -5,20 +5,20 @@ let noDodgeCount = 0;
 
 async function load() {
   try {
-    const res = await fetch(`/api/invitations/${id}`);
-    if (!res.ok) throw new Error('not found');
+    const res = await fetch(`/api/invitations/${id}`);\n    if (!res.ok) throw new Error('not found');
     invitation = await res.json();
+    console.log('Invitation loaded:', invitation);
     t = translations[invitation.language] || translations.uz;
     render();
   } catch (e) {
+    console.error('Error loading invitation:', e);
     document.getElementById('app').innerHTML = `
       <div class="invite-card">
         <div class="not-found-wrapper">
           <span class="not-found-icon">💔</span>
           <p class="not-found-text">Taklifnoma topilmadi</p>
         </div>
-      </div>`;
-  }
+      </div>`;\n  }
 }
 
 function escapeHtml(str = '') {
@@ -82,11 +82,18 @@ function setupDodge(btn) {
 }
 
 function onYes() {
+  console.log('onYes clicked, invitation:', invitation);
+  
   const lts = invitation.locationTimeSelection;
+  console.log('LTS:', lts);
+  
   const hasPlaces = lts && lts.enabled && lts.placeOptions && lts.placeOptions.length > 0;
   const hasTimes = lts && lts.enabled && lts.timeOptions && lts.timeOptions.length > 0;
 
+  console.log('hasPlaces:', hasPlaces, 'hasTimes:', hasTimes);
+
   if (!hasPlaces && !hasTimes) {
+    console.log('No places or times, submitting directly');
     submit('ha', invitation.place || '', invitation.time || '');
     return;
   }
@@ -115,6 +122,7 @@ function onYes() {
   html += `<button id="backBtn" class="back-button">← Orqaga</button>`;
 
   document.getElementById('followUp').innerHTML = html;
+  console.log('Follow-up content inserted');
 
   let chosenPlace = '';
   let chosenTime = '';
@@ -124,6 +132,7 @@ function onYes() {
       document.querySelectorAll('[data-type="place"]').forEach(e => e.classList.remove('active'));
       el.classList.add('active');
       chosenPlace = el.textContent.trim();
+      console.log('Place selected:', chosenPlace);
     });
   });
 
@@ -132,6 +141,7 @@ function onYes() {
       document.querySelectorAll('[data-type="time"]').forEach(e => e.classList.remove('active'));
       el.classList.add('active');
       chosenTime = el.textContent.trim();
+      console.log('Time selected:', chosenTime);
     });
   });
 
@@ -158,7 +168,9 @@ async function submit(answer, place, time) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ answer, place, time, noAttempts: noDodgeCount })
     });
-  } catch (e) {}
+  } catch (e) {
+    console.error('Error submitting response:', e);
+  }
 
   const isYes = answer === 'ha';
   const icon = isYes ? '🥰' : '💙';
